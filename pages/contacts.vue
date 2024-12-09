@@ -215,7 +215,7 @@ const saveContact = async () => {
   });
 
   definePageMeta({
-    middleware: 'auth', // Menambahkan middleware autentikasi
+    middleware: ['auth'], // Menambahkan middleware autentikasi
   });
   </script>
 
