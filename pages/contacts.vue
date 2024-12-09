@@ -1,16 +1,20 @@
 <template>
-  <div class="max-w-full">
+  <div class="max-w-full min-h-screen bg-gray-100 flex flex-col">
 
-    <header class="max-w-full w-full px-4 py-4 bg-green-500 flex items-center justify-between relative">
-      <h1 class="flex-grow text-center text-4xl font-bold text-white font-nunito">DAFTAR KONTAK</h1>
-
-      <div class="flex items-center relative" v-if="user">
-        <button @click="showUserInfo = !showUserInfo" class="bg-gray-800 text-white py-2 px-4 rounded cursor-pointer hover:bg-gray-800">
-          {{ user.name }}
+    <!-- Header -->
+    <header class="w-full px-6 py-4 bg-green-600 flex items-center justify-between shadow-md">
+      <h1 class="text-2xl lg:text-4xl font-bold text-white font-nunito">DAFTAR KONTAK</h1>
+      <div class="relative" v-if="user">
+        <button 
+          @click="showUserInfo = !showUserInfo" 
+          class="bg-white text-green-600 py-2 px-4 rounded shadow hover:bg-gray-100"
+        >
+          {{ user?.name }}
         </button>
-
-        <!-- Popup untuk menampilkan detail pengguna -->
-        <div v-if="showUserInfo" class="absolute top-full right-0 bg-white p-4 rounded shadow-md mt-2 mb-40 w-64">
+        <div 
+          v-if="showUserInfo" 
+          class="absolute top-12 right-0 bg-white p-4 rounded shadow-lg w-64"
+        >
           <div class="mb-4">
             <div class="flex">
               <p class="font-semibold mr-2">Nama:</p>
@@ -21,53 +25,72 @@
               <p>{{ user.email }}</p>
             </div>
           </div>
-          <button @click="logout" class="bg-red-500 text-white py-2 px-4 rounded cursor-pointer hover:bg-red-600">
+          <button 
+            @click="logout" 
+            class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+          >
             Logout
           </button>
         </div>
       </div>
     </header>
 
-    <!-- Tambahkan tombol Tambah Kontak di sini -->
-    <div class="my-4 flex justify-start ml-2 mr-4">
-      <button @click="showAddPopup = true" class="bg-yellow-500 text-white py-2 px-6 text-lg rounded hover:bg-yellow-400 transform hover:scale-105">
+    <!-- Tombol Tambah Kontak -->
+    <div class="my-4 px-6">
+      <button 
+        @click="showAddPopup = true" 
+        class="bg-yellow-500 text-white py-2 px-6 rounded shadow hover:bg-yellow-400 transform hover:scale-105"
+      >
         Tambah Kontak
       </button>
     </div>
 
-
     <!-- Tabel Kontak -->
-    <table class="w-full table-fixed mt-4 bg-white">
-      <thead>
-        <tr>
-          <th class="p-4 border text-left w-1/4 bg-gray-300 text-black">Nama</th>
-          <th class="p-4 border text-left w-1/4 bg-gray-300 text-black">Telepon</th>
-          <th class="p-4 border text-left w-1/4 bg-gray-300 text-black">Alamat</th>
-          <th class="p-4 border text-center w-1/6 bg-gray-300 text-black">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="contact in contacts" :key="contact.id">
-          <td class="p-4 border">{{ contact.name }}</td>
-          <td class="p-4 border">{{ contact.phone }}</td>
-          <td class="p-4 border">{{ contact.address }}</td>
-          <td class="p-4 border text-center">
-            <div class="flex justify-center gap-2">
-              <button @click="editContact(contact)" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transform hover:scale-105">
-                Edit
-              </button>
-              <button @click="deleteContact(contact.id)" class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transform hover:scale-105">
-                Hapus
-              </button>
-            </div>
-          </td>
+    <div class="flex-grow px-6">
+      <table class="w-full table-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <thead class="bg-gray-300">
+          <tr>
+            <th class="p-4 text-left">Nama</th>
+            <th class="p-4 text-left">Telepon</th>
+            <th class="p-4 text-left">Alamat</th>
+            <th class="p-4 text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr 
+            v-for="contact in contacts" 
+            :key="contact.id" 
+            class="border-t even:bg-gray-100 hover:bg-gray-200"
+          >
+            <td class="p-4">{{ contact.name }}</td>
+            <td class="p-4">{{ contact.phone }}</td>
+            <td class="p-4">{{ contact.address }}</td>
+            <td class="p-4 text-center">
+              <div class="flex justify-center space-x-2">
+                <button 
+                  @click="editContact(contact)" 
+                  class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transform hover:scale-105"
+                >
+                  Edit
+                </button>
+                <button 
+                  @click="deleteContact(contact.id)" 
+                  class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transform hover:scale-105"
+                >
+                  Hapus
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- Popup Tambah / Edit Kontak -->
-    <div v-if="showAddPopup || showEditPopup" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <!-- Popup Tambah/Edit Kontak -->
+    <div 
+      v-if="showAddPopup || showEditPopup" 
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+    >
       <div class="bg-white p-8 rounded-lg shadow-lg w-11/12 max-w-md animate-fade-in">
         <form @submit.prevent="saveContact">
           <h2 class="text-xl mb-4" v-if="showAddPopup">Tambah Kontak</h2>
@@ -92,33 +115,40 @@
       </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="w-full bg-gray-800 text-white py-4 mt-4">
+      <div class="flex justify-center">
+        <p class="text-sm">© 2024 Daftar Kontak. All rights reserved.</p>
+      </div>
+    </footer>
+
   </div>
 </template>
 
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  const config = useRuntimeConfig();
-  
-  const contacts = ref([]);
-  const form = ref({ id: null, name: '', phone: '', address: '' });
-  const showAddPopup = ref(false);
-  const showEditPopup = ref(false);
-  const showUserInfo = ref(false); // Menampilkan info pengguna
-  const user = ref(null); // Menyimpan informasi pengguna
-  
-  const logout = () => {
-  localStorage.removeItem('token'); // Hapus token
-  window.location.href = '/login'; // Arahkan ke halaman login
+<script setup>
+import { ref, onMounted } from 'vue';
+const config = useRuntimeConfig();
+
+const contacts = ref([]);
+const form = ref({ id: null, name: '', phone: '', address: '' });
+const showAddPopup = ref(false);
+const showEditPopup = ref(false);
+const showUserInfo = ref(false); 
+const user = ref(null);
+
+const logout = () => {
+  localStorage.removeItem('token');
+  window.location.href = '/login'; // Redirect ke halaman login setelah logout
 };
 
 const getUserInfo = async () => {
   const token = localStorage.getItem('token');
-  
+
   if (token) {
     try {
       const response = await fetch(`${config.public.apiBase}/user`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Mengirim token autentikasi
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -127,19 +157,16 @@ const getUserInfo = async () => {
         return;
       }
 
-      const userData = await response.json(); // Menangkap data pengguna dari server
-      user.value = userData; // Menyimpan data pengguna ke dalam variabel reactive
+      const userData = await response.json();
+      user.value = userData; // Simpan data pengguna
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
   }
 };
 
-
-  const fetchContacts = async () => {
+const fetchContacts = async () => {
   const token = localStorage.getItem('token');
-  console.log('Fetching contacts...');
-
   const response = await fetch(`${config.public.apiBase}/posts`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -150,16 +177,13 @@ const getUserInfo = async () => {
   }
 
   const data = await response.json();
-  console.log('Contacts fetched:', data); // Logging hasil data
-  contacts.value = data;
+  contacts.value = data; 
 };
 
 const saveContact = async () => {
   const token = localStorage.getItem('token');
   const method = form.value.id ? 'PUT' : 'POST';
   const url = form.value.id ? `/posts/${form.value.id}` : '/posts';
-
-  console.log('Saving contact:', form.value, 'Method:', method, 'URL:', url);
 
   const response = await fetch(`${config.public.apiBase}${url}`, {
     method,
@@ -175,20 +199,17 @@ const saveContact = async () => {
     return;
   }
 
-  console.log('Contact saved successfully');
   closePopup();
-  fetchContacts(); // Refresh daftar kontak setelah menyimpan
+  fetchContacts();
 };
 
-  const editContact = (contact) => {
-    form.value = { ...contact };
-    showEditPopup.value = true;
-  };
-  
-  const deleteContact = async (id) => {
-  const token = localStorage.getItem('token');
-  console.log('Deleting contact with ID:', id);
+const editContact = (contact) => {
+  form.value = { ...contact };
+  showEditPopup.value = true;
+};
 
+const deleteContact = async (id) => {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${config.public.apiBase}/posts/${id}`, {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
@@ -199,23 +220,34 @@ const saveContact = async () => {
     return;
   }
 
-  console.log('Contact deleted successfully');
-  fetchContacts(); // Refresh daftar kontak setelah menghapus
+  fetchContacts();
 };
 
-  const closePopup = () => {
-    showAddPopup.value = false;
-    showEditPopup.value = false;
-    form.value = { id: null, name: '', phone: '', address: '' };
-  };
+const closePopup = () => {
+  showAddPopup.value = false;
+  showEditPopup.value = false;
+  form.value = { id: null, name: '', phone: '', address: '' };
+};
 
-  onMounted(() => {
-    fetchContacts(); // Ambil kontak
-    getUserInfo();   // Ambil informasi pengguna
-  });
+onMounted(() => {
+  getUserInfo();  // Ambil data user saat halaman dimuat
+  fetchContacts(); // Ambil data kontak saat halaman dimuat
+});
+</script>
 
-  definePageMeta({
-    middleware: ['auth'], // Menambahkan middleware autentikasi
-  });
-  </script>
+<style scoped>
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
 
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Optional additional footer styles */
+footer {
+  background-color: #2d3748;
+  color: #edf2f7;
+}
+</style>
