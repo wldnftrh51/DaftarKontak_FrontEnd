@@ -1,7 +1,7 @@
 <template>
-  <div class="flex justify-center items-center h-screen bg-gray-100 p-4">
+  <div class="flex justify-center items-center h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-md max-w-sm w-full text-center">
-      <h1 class="text-2xl font-semibold text-gray-800 mb-6">Login</h1>
+      <h1 class="text-2xl font-semibold text-gray-800 mb-6">LOGIN</h1>
       <form @submit.prevent="login" class="space-y-4">
         <div>
           <label for="email" class="block text-sm font-medium text-gray-600 mb-1 text-left">Email:</label>
@@ -34,7 +34,7 @@
       <p class="text-sm text-gray-600 mt-4">
         Belum punya akun? 
         <button @click="goToRegister" class="text-green-500 underline hover:text-green-600">
-          Register
+          Daftar
         </button>
       </p>
     </div>
