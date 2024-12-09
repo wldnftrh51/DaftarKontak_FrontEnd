@@ -1,7 +1,11 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  const token = localStorage.getItem('token'); // Ambil token dari localStorage
-  if (!token) {
-    // Jika token tidak ada, arahkan pengguna ke halaman login
-    return navigateTo('/login');
+  if (process.server) return; // Hindari eksekusi di server
+
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return navigateTo('/login');
+    }
   }
 });
+
