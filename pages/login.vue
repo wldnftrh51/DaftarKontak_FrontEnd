@@ -69,7 +69,11 @@ const login = async () => {
 
     const data = await response.json();
     localStorage.setItem('token', data.token);
-    router.push('/contacts'); // Redirect to Daftar Kontak
+    // alert('localhost says: Anda berhasil login');
+    router.push('/contacts'); 
+    // setTimeout(() => {
+    //   router.push('/contacts');
+    // }, 500);
   } catch (err) {
     error.value = err.message;
   }
