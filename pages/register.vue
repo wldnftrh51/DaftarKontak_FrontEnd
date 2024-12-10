@@ -96,7 +96,7 @@ const register = async () => {
 };
 
 const goToLogin = () => {
-  // isLogin.value = true;
+
   router.push('/login'); // Mengarahkan ke halaman login
 };
 </script>
