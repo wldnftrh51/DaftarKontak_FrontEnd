@@ -7,7 +7,7 @@ export default defineNuxtConfig({
       apiBase: 'http://localhost:8000/api'
     },  
   },
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', '@fortawesome/fontawesome-free/css/all.min.css'],
   postcss: {
     plugins: {
       tailwindcss: {},
