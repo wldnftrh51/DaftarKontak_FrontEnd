@@ -1,10 +1,19 @@
 <template>
 
   <div class="max-w-full min-h-screen bg-gray-100 flex flex-col">
-    <!-- Alert Message -->
-    <div v-if="alertMessage"
-      class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white py-2 px-4 rounded shadow-lg">
-      <p>{{ alertMessage }}</p>
+    <!-- Alert Popup -->
+    <div v-if="alertMessage" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div class="bg-white rounded-lg p-6 shadow-lg max-w-md w-full">
+        <!-- <h2 class="text-lg font-semibold mb-4">Pesan</h2> -->
+         <!-- Animasi Centang -->
+         <div class="checkmark">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" class="h-12 w-12 mx-auto mb-4">
+              <circle cx="26" cy="26" r="25" fill="none" class="checkmark-circle" />
+              <path fill="none" d="M14 27l7 7 16-16" class="checkmark-check" />
+            </svg>
+          </div>
+        <p class="text-gray-800 text-lg font-medium text-center mb-4">{{ alertMessage }}</p>
+      </div>
     </div>
 
     <!-- Header -->
@@ -58,20 +67,6 @@
       </div>
     </div>
 
-    <!-- Tombol Tambah Kontak -->
-    <!-- <div class="my-4 px-6">
-      <button @click="showAddPopup = true"
-        class="bg-yellow-500 text-white py-2 px-6 rounded shadow hover:bg-yellow-400 transform hover:scale-105">
-        <i class="fa fa-plus mr-2"></i>Tambah Kontak
-      </button>
-    </div> -->
-
-    <!-- Pencarian Kontak -->
-    <!-- <div class="my-4 px-6">
-      <input type="text" v-model="searchQuery" placeholder="Cari Kontak..."
-        class="w-full p-3 border border-gray-300 rounded mb-4">
-    </div> -->
-
     <!-- Tabel Kontak -->
     <div class="flex-grow px-6">
       <table class="w-full table-auto bg-white rounded-lg shadow-md overflow-hidden">
@@ -104,19 +99,16 @@
               <div class="flex justify-center space-x-2">
                 <button @click="editContact(contact)"
                   class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transform hover:scale-105">
-                  <i class="fa fa-pencil-alt mr-2"></i>
-                </button>
+                  <i class="fa fa-pencil-alt mr-2"></i></button>
                 <button @click="deleteContact(contact.id)"
                   class="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transform hover:scale-105">
-                  <i class="fa fa-trash-alt mr-2"></i>
-                </button>
+                  <i class="fa fa-trash-alt mr-2"></i></button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-
 
     <!-- Popup Tambah/Edit Kontak -->
     <div v-if="showAddPopup || showEditPopup"
@@ -149,12 +141,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
-    <!-- <footer class="w-full bg-gray-800 text-white py-4 mt-4">
-      <div class="flex justify-center">
-        <p class="text-sm">© 2024 Daftar Kontak. All rights reserved.</p>
-      </div>
-    </footer> -->
     <footer class="w-full bg-gray-800 text-white py-6 mt-4">
       <div class="container mx-auto px-6">
         <div class="flex flex-col md:flex-row justify-between items-center">
@@ -213,8 +199,10 @@ const user = ref(null);
 
 const logout = () => {
   localStorage.removeItem('token');
-  alert('Anda telah berhasil logout');
-  window.location.href = '/login'; // Redirect ke halaman login setelah logout
+  showAlert('Anda telah berhasil logout.');
+  setTimeout(() => {
+    window.location.href = '/login';
+  }, 2000);
 };
 
 const getUserInfo = async () => {
@@ -270,24 +258,16 @@ const saveContact = async () => {
     body: JSON.stringify(form.value),
   });
 
-  // if (!response.ok) {
-  //   console.error('Error saving contact:', await response.json());
-  //   return;
-  // }
-
-  // closePopup();
-  // fetchContacts();
-
   if (!response.ok) {
     const errorMessage = await response.json();
     console.error('Error saving contact:', errorMessage);
-    alertMessage.value = `Gagal menyimpan kontak: ${errorMessage.message || 'Unknown error'}`; // Menampilkan alert jika gagal
+    showAlert('Gagal menyimpan kontak');
     return;
   }
 
-  alertMessage.value = form.value.id ? 'Berhasil mengedit kontak' : 'Berhasil menambah kontak'; // Menampilkan alert jika berhasil
   closePopup();
   fetchContacts();
+  showAlert(form.value.id ? 'Kontak berhasil diperbarui' : 'Kontak berhasil ditambahkan');
 };
 
 const editContact = (contact) => {
@@ -302,21 +282,15 @@ const deleteContact = async (id) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  // if (!response.ok) {
-  //   console.error('Error deleting contact:', await response.json());
-  //   return;
-  // }
-
-  // fetchContacts();
   if (!response.ok) {
     const errorMessage = await response.json();
     console.error('Error deleting contact:', errorMessage);
-    alertMessage.value = `Gagal menghapus kontak: ${errorMessage.message || 'Unknown error'}`; // Menampilkan alert jika gagal
+    showAlert('Gagal menghapus kontak.');
     return;
   }
 
-  alertMessage.value = 'Kontak berhasil dihapus'; // Menampilkan alert jika berhasil
   fetchContacts();
+  showAlert('Kontak berhasil dihapus');
 };
 
 const closePopup = () => {
@@ -371,11 +345,16 @@ const exportContacts = () => {
 
 const alertMessage = ref('');
 
-
+const showAlert = (message) => {
+  alertMessage.value = message;
+  setTimeout(() => {
+    alertMessage.value = ''; 
+  }, 2000);
+};
 
 onMounted(() => {
-  getUserInfo();  // Ambil data user saat halaman dimuat
-  fetchContacts(); // Ambil data kontak saat halaman dimuat
+  getUserInfo();  
+  fetchContacts(); 
 });
 </script>
 
@@ -394,9 +373,40 @@ onMounted(() => {
   animation: fade-in 0.3s ease-out;
 }
 
-/* Optional additional footer styles */
-footer {
-  background-color: #2d3748;
-  color: #edf2f7;
+
+.checkmark-circle {
+  stroke: #4caf50;
+  stroke-width: 2;
+  animation: draw-circle 0.5s ease-out forwards;
+}
+
+.checkmark-check {
+  stroke: #4caf50;
+  stroke-width: 2;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: draw-check 0.3s ease-out 0.5s forwards;
+}
+
+@keyframes draw-circle {
+  from {
+    stroke-dasharray: 0 157;
+  }
+  to {
+    stroke-dasharray: 157 0;
+  }
+}
+
+@keyframes draw-check {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.fixed {
+  z-index: 50;
 }
 </style>

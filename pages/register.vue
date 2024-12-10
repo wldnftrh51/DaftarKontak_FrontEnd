@@ -45,12 +45,20 @@
             </button>
           </form>
           <p v-if="error" class="text-red-500 text-sm mt-4">{{ error }}</p>
-          <!-- <p class="text-sm text-gray-600 mt-6">
-            Already have an account?
-            <button @click="goToLogin" class="text-green-500 hover:underline">
-              Sign In
-            </button>
-          </p> -->
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div v-if="showAlert" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center max-w-xs">
+          <!-- Animasi Centang -->
+          <div class="checkmark">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52" class="h-12 w-12 mx-auto mb-4">
+              <circle cx="26" cy="26" r="25" fill="none" class="checkmark-circle" />
+              <path fill="none" d="M14 27l7 7 16-16" class="checkmark-check" />
+            </svg>
+          </div>
+          <p class="text-gray-800 text-lg font-medium">{{ alertMessage }}</p>
         </div>
       </div>
     </div>
@@ -67,6 +75,8 @@ const email = ref('');
 const password = ref('');
 const password_confirmation = ref('');
 const error = ref('');
+const showAlert = ref(false);
+const alertMessage = ref('');
 const router = useRouter();
 
 const register = async () => {
@@ -89,7 +99,13 @@ const register = async () => {
 
     const data = await response.json();
     localStorage.setItem('token', data.token);
-    router.push('/login'); // Redirect to Daftar Kontak
+    alertMessage.value = 'Berhasil mendaftar! Anda akan diarahkan ke halaman login.';
+    showAlert.value = true;
+
+    setTimeout(() => {
+      showAlert.value = false;
+      router.push('/login');
+    }, 3000); 
   } catch (err) {
     error.value = err.message;
   }
@@ -111,10 +127,40 @@ const goToLogin = () => {
   opacity: 0;
   background-color: #f9f9f9; /* Warna halaman sebelumnya */
 }
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
-  background-color: #ffffff; /* Warna halaman baru */
+
+.checkmark-circle {
+  stroke: #4caf50;
+  stroke-width: 2;
+  animation: draw-circle 0.5s ease-out forwards;
 }
 
+.checkmark-check {
+  stroke: #4caf50;
+  stroke-width: 2;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: draw-check 0.3s ease-out 0.5s forwards;
+}
+
+@keyframes draw-circle {
+  from {
+    stroke-dasharray: 0 157;
+  }
+  to {
+    stroke-dasharray: 157 0;
+  }
+}
+
+@keyframes draw-check {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.fixed {
+  z-index: 50;
+}
 </style>
